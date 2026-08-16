@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityModManagerNet;
 
-namespace YqlossClientHarmony.Features.Replay;
+namespace YqlossClientHarmony.Features.Replay.Interop;
 
 public class KeyEventReceiverManager : IKeyEventReceiver
 {

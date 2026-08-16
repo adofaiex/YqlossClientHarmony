@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -34,6 +35,7 @@ public static class ReplayEncoder
         writer.Write(metadata.ModList ?? "");
         writer.Write(metadata.InputOffset ?? double.NaN);
         writer.Write(metadata.AudioBufferSize ?? 0);
+        writer.Write(metadata.Pitch ?? 0);
 
         writer.Close();
         return stream.ToArray();
@@ -91,6 +93,21 @@ public static class ReplayEncoder
         return stream.ToArray();
     }
 
+    public static byte[] EncodeCustomPayload(string ns, byte[] data)
+    {
+        using var stream = new MemoryStream();
+        var writer = new BinaryWriter(stream);
+
+        writer.Write(ReplayConstants.CustomPayloadMagicNumber);
+        writer.Write(ReplayConstants.CustomPayloadFormatVersion);
+        writer.Write(ns);
+        writer.Write(data.LongLength);
+        writer.Write(data);
+
+        writer.Close();
+        return stream.ToArray();
+    }
+
     public static byte[] Encode(Replay replay)
     {
         using var stream = new MemoryStream();
@@ -98,13 +115,18 @@ public static class ReplayEncoder
 
         writer.Write(ReplayConstants.MagicNumber);
         writer.Write(ReplayConstants.FormatVersion);
-        byte[][] blocks =
+
+        List<byte[]> blocks =
         [
             EncodeMetadata(replay),
             EncodeKeyEvents(replay),
             EncodeJudgements(replay)
         ];
-        writer.Write(blocks.Length);
+
+        foreach (var (ns, data) in replay.CustomPayloads)
+            blocks.Add(EncodeCustomPayload(ns, data));
+
+        writer.Write(blocks.Count);
         blocks.ForEach(WriteBlock);
 
         writer.Close();

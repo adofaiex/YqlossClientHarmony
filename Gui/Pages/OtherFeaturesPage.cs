@@ -20,14 +20,7 @@ public static class OtherFeaturesPage
         {
             Text(I18N.Translate("Page.OtherFeatures.Name"), TextStyle.Title);
             Separator();
-            SwitchOption(group, ref Main.Settings.EnableFixKillerDecorationsInNoFail,
-                "Setting.FixKillerDecorationsInNoFail.Enabled");
-            Separator();
-            SwitchOption(group, ref Main.Settings.EnableFixSetInputEventCrash, "Setting.FixSetInputEventCrash.Enabled");
-            Separator();
-            SwitchOption(group, ref Main.Settings.EnableFixSavedJsonFormat, "Setting.FixSavedJsonFormat.Enabled");
-            Separator();
-            SwitchOption(group, ref Main.Settings.EnableDisablePauseInAuto, "Setting.DisablePauseInAuto.Enabled");
+            SwitchOption(group, ref Main.Settings.EnableFixKillerDecorationsInNoFail, "Setting.FixKillerDecorationsInNoFail.Enabled");
             Separator();
 
             var groupBlock = group.Group;

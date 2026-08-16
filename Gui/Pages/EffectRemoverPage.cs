@@ -324,6 +324,8 @@ public static class EffectRemoverPage
                             SwitchOption(groupEventTrack, ref settings.DisableAnimateTrack, "Setting.ModifyLoadingLevel.AnimateTrack");
                             Separator();
                             SwitchOption(groupEventTrack, ref settings.DisableRecolorTrack, "Setting.ModifyLoadingLevel.RecolorTrack");
+                            Separator();
+                            SwitchOption(groupEventTrack, ref settings.DisableCheckpoint, "Setting.ModifyLoadingLevel.Checkpoint");
                         }
                         End();
                     }

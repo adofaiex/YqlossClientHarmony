@@ -17,11 +17,7 @@ public class Settings : UnityModManager.ModSettings
 
     public bool EnableFixKillerDecorationsInNoFail = false;
 
-    public bool EnableFixSetInputEventCrash = false;
-
     public bool EnableModifyLoadingLevel = false;
-
-    public bool EnableDisablePauseInAuto = false;
 
     public string SelectedModifyLoadingLevelProfile = "";
 
@@ -37,8 +33,6 @@ public class Settings : UnityModManager.ModSettings
     public bool EnableReplay = false;
 
     public SettingsReplay ReplaySettings = new();
-
-    public bool EnableFixSavedJsonFormat = false;
 
     public bool EnableBlockUnintentionalEscape = false;
 

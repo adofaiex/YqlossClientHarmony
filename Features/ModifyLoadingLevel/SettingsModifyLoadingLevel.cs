@@ -22,7 +22,8 @@ public class SettingsModifyLoadingLevel
         var profile = GetProfile(current);
         if (profile is not null) return profile;
 
-        Main.Mod.Logger.Warning($"current ModifyLoadingLevel profile \"{current}\" does not exist, defaulting to the default profile");
+        Main.Mod.Logger.Warning(
+            $"current ModifyLoadingLevel profile \"{current}\" does not exist, defaulting to the default profile");
         Main.Settings.SelectedModifyLoadingLevelProfile = "";
         Main.Settings.Save(Main.Mod);
         return Main.Settings.ModifyLoadingLevelSettings;
@@ -36,7 +37,8 @@ public class SettingsModifyLoadingLevel
         var profile = GetProfile(current);
         if (profile is null) throw new WTFException("profile is null???");
 
-        if (GetProfile(newName) is not null) return I18N.Translate("Gui.EffectRemover.Error.CannotRenameAsExistingName", newName);
+        if (GetProfile(newName) is not null)
+            return I18N.Translate("Gui.EffectRemover.Error.CannotRenameAsExistingName", newName);
 
         profile.Id = newName;
         Main.Settings.SelectedModifyLoadingLevelProfile = newName;
@@ -85,7 +87,8 @@ public class SettingsModifyLoadingLevel
 
     private static Trigger<string, SettingsModifyLoadingLevel> InstanceTrigger { get; } = new(_ => GetCurrentProfile());
 
-    public static SettingsModifyLoadingLevel Instance => InstanceTrigger.Get(Main.Settings.SelectedModifyLoadingLevelProfile);
+    public static SettingsModifyLoadingLevel Instance =>
+        InstanceTrigger.Get(Main.Settings.SelectedModifyLoadingLevelProfile);
 
     public bool Enabled => Main.Enabled && Main.Settings.EnableModifyLoadingLevel;
 
@@ -298,4 +301,6 @@ public class SettingsModifyLoadingLevel
     public bool DisableEditorComment = false;
 
     public bool DisableBookmark = false;
+
+    public bool DisableCheckpoint = false;
 }

@@ -68,18 +68,29 @@ public static class ReplayUtils
 
     public static string ReplayFileName(Replay replay)
     {
-        var time = DateTime.Now.ToString("yyyy.MM.dd-HH.mm.ss.fff");
+        var time = DateTime.Now.ToString("yyyy.MM.dd-HH.mm");
         // var filteredArtist = FilterInvalidCharacters(replay.Metadata.Artist).Trim();
         // var filteredSong = FilterInvalidCharacters(replay.Metadata.Song).Trim();
         // var filteredAuthor = FilterInvalidCharacters(replay.Metadata.Author).Trim();
         // var folderName = $"{filteredArtist} - {filteredSong} - {filteredAuthor}".Trim();
+        var pitch = replay.Metadata.Pitch;
         var xAccuracy = GetXAccuracy(replay) * 100;
         var startingProgress = replay.Metadata.StartingFloorId * 100 / replay.Metadata.TotalFloorCount;
         if (replay.Metadata.StartingFloorId != 0 && startingProgress == 0) startingProgress = 1;
         var endingProgress = (GetEndingFloorId(replay) + 1) * 100 / replay.Metadata.TotalFloorCount;
-        var fileName = $"{time}-{xAccuracy:0.00}-{startingProgress}-{endingProgress}.ychreplaygz";
+        var fileName = $"{time} ({pitch:0.00}x-{xAccuracy:0.00}%) [{startingProgress}%-{endingProgress}%]";
         // return Path.Combine(Settings.Instance.ReplayStorageLocation, folderName, fileName);
-        return Path.Combine(SettingsReplay.Instance.ReplayStorageLocation, fileName);
+        var suffix = "";
+        var count = 1;
+        string? path = null;
+        while (path is null || File.Exists(path))
+        {
+            path = Path.Combine(SettingsReplay.Instance.ReplayStorageLocation, fileName + suffix + ".ychreplaygz");
+            ++count;
+            suffix = $" ({count})";
+        }
+
+        return path;
     }
 
     public static Dictionary<int, int> CalculateKeyPressCounts(Replay replay)

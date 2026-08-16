@@ -62,7 +62,8 @@ public class EventType(
         new("Bookmark", s => s.DisableBookmark),
         new("SetHoldSound", s => s.DisableSetHoldSound),
         new("Hide", s => s.DisableHide),
-        new("ScaleRadius", s => s.DisableScaleRadius)
+        new("ScaleRadius", s => s.DisableScaleRadius),
+        new("Checkpoint", s => s.DisableCheckpoint)
     ];
 
     private bool MatchesName(Dictionary<string, object?> actionOrDecoration)
@@ -82,6 +83,7 @@ public class EventType(
 
     public bool Matches(Dictionary<string, object?> actionOrDecoration)
     {
-        return settingSelector(SettingsModifyLoadingLevel.Instance) && MatchesName(actionOrDecoration) && MatchesFilter(actionOrDecoration);
+        return settingSelector(SettingsModifyLoadingLevel.Instance) && MatchesName(actionOrDecoration) &&
+               MatchesFilter(actionOrDecoration);
     }
 }

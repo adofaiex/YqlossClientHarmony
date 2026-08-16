@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityModManagerNet;
+using YqlossClientHarmony.Features.Replay.Interop;
 
 namespace YqlossClientHarmony.Features.Replay;
 
@@ -25,6 +26,9 @@ public static class ReplayRecorder
     {
         var replay = Replay;
         if (replay is null) return;
+
+        foreach (var (ns, data) in ReplayStorageProtocol.OnStopRecording())
+            replay.CustomPayloads[ns] = data;
 
         if (replay.KeyEvents.Count == 0 && replay.Judgements.Count == 0)
         {
@@ -88,12 +92,15 @@ public static class ReplayRecorder
             $"YCH:{Main.Mod.Info.Version} ADOFAI:{Application.version} UMM:{UnityModManager.version}",
             GetModList(),
             (double)scrConductor.calibration_i * 1000,
-            Persistence.audioBufferSize
+            Persistence.audioBufferSize,
+            Adofai.Conductor.song.pitch
         ));
 
         ErrorMeterValue = null;
         LastFloorIdJudgement = floorId;
         LastFloorIdKeyEvent = floorId;
+
+        ReplayStorageProtocol.OnStartRecording(floorId);
 
         Main.Mod.Logger.Log("starting to record replay");
     }

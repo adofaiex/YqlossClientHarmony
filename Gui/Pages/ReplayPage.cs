@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityFileDialog;
 using YqlossClientHarmony.Features.Replay;
 using YqlossClientHarmony.Utilities;
 using static YqlossClientHarmony.Gui.YCHLayout;
 using static YqlossClientHarmony.Gui.YCHLayoutPreset;
 using static YqlossClientHarmony.Utilities.SettingUtil;
-
-using UnityFileDialog;
 
 namespace YqlossClientHarmony.Gui.Pages;
 
@@ -125,6 +124,7 @@ public static class ReplayPage
             I18N.Translate("Gui.Replay.ReplayInformation.Artist.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.Song.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.Author.Name"),
+            I18N.Translate("Gui.Replay.ReplayInformation.Pitch.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.XAccuracy.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.Progress.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.Judgements.Name"),
@@ -132,7 +132,8 @@ public static class ReplayPage
             I18N.Translate("Gui.Replay.ReplayInformation.NoFail.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.HoldTileBehavior.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.LimitJudgements.Name"),
-            I18N.Translate("Gui.Replay.ReplayInformation.KeyCount.Name")
+            I18N.Translate("Gui.Replay.ReplayInformation.KeyCount.Name"),
+            I18N.Translate("Gui.Replay.ReplayInformation.Plugins.Name")
         ];
 
         if (advanced)
@@ -164,6 +165,8 @@ public static class ReplayPage
         var filteredArtist = ReplayUtils.FilterInvalidCharacters(replay.Metadata.Artist).Trim();
         var filteredSong = ReplayUtils.FilterInvalidCharacters(replay.Metadata.Song).Trim();
         var filteredAuthor = ReplayUtils.FilterInvalidCharacters(replay.Metadata.Author).Trim();
+        var pitchKey = replay.Metadata.Pitch is null ? "Unknown" : "Value";
+        var pitch = replay.Metadata.Pitch;
         var xAccuracy = ReplayUtils.GetXAccuracy(replay) * 100;
         var startFloor = replay.Metadata.StartingFloorId;
         var endFloor = ReplayUtils.GetEndingFloorId(replay) + 1;
@@ -212,6 +215,7 @@ public static class ReplayPage
         var inputOffsetKey = replay.Metadata.InputOffset is null ? "Unknown" : "Value";
         var audioBufferSizeKey = replay.Metadata.AudioBufferSize is null ? "Unknown" : "Value";
         var (uniqueKeys, keyCounts) = GetKeyCountInfo(replay);
+        var plugins = string.Join(",", replay.CustomPayloads.Keys);
         return
         [
             I18N.Translate("Gui.Replay.ReplayInformation.ReplayFile.Value", replayFileName),
@@ -219,6 +223,7 @@ public static class ReplayPage
             I18N.Translate("Gui.Replay.ReplayInformation.Artist.Value", filteredArtist),
             I18N.Translate("Gui.Replay.ReplayInformation.Song.Value", filteredSong),
             I18N.Translate("Gui.Replay.ReplayInformation.Author.Value", filteredAuthor),
+            I18N.Translate($"Gui.Replay.ReplayInformation.Pitch.{pitchKey}", pitch),
             I18N.Translate("Gui.Replay.ReplayInformation.XAccuracy.Value", xAccuracy),
             I18N.Translate("Gui.Replay.ReplayInformation.Progress.Value", startProgress, startFloor, endProgress, endFloor, replay.Metadata.TotalFloorCount),
             I18N.Translate("Gui.Replay.ReplayInformation.Judgements.Value", overload, te, e, ep, pp, auto, lp, l, tl, miss),
@@ -227,6 +232,7 @@ public static class ReplayPage
             I18N.Translate($"Gui.Replay.ReplayInformation.HoldTileBehavior.{holdBehavior}"),
             I18N.Translate($"Gui.Replay.ReplayInformation.LimitJudgements.{hitMarginLimit}"),
             I18N.Translate("Gui.Replay.ReplayInformation.KeyCount.Value", uniqueKeys),
+            I18N.Translate("Gui.Replay.ReplayInformation.Plugins.Value", plugins),
             I18N.Translate($"Gui.Replay.ReplayInformation.AsyncInput.{asyncInput}"),
             I18N.Translate("Gui.Replay.ReplayInformation.KeyPressCounts.Value", string.Join(", ", keyCounts)),
             I18N.Translate($"Gui.Replay.ReplayInformation.YchVersion.{ychVersionKey}", replay.Metadata.YchVersion),

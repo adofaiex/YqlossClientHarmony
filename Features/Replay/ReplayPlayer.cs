@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using YqlossClientHarmony.Features.Replay.Interop;
 
 namespace YqlossClientHarmony.Features.Replay;
 
@@ -104,9 +105,8 @@ public static class ReplayPlayer
 
             List<(Replay.KeyEventType, int)> replayKeyEvents = [];
             List<(Replay.KeyEventType, int)> replayKeyEventsForReceivers = [];
-            for (var i = 0; i < replay.KeyEvents.Count; i++)
+            foreach (var keyEvent in replay.KeyEvents)
             {
-                var keyEvent = replay.KeyEvents[i];
                 accumulatedFloorId += keyEvent.FloorIdIncrement;
                 replayKeyEvents.Add((keyEvent, accumulatedFloorId));
                 replayKeyEventsForReceivers.Add((keyEvent, accumulatedFloorId));
@@ -150,6 +150,8 @@ public static class ReplayPlayer
 
         KeyEventReceiverManager.Instance.Begin();
 
+        ReplayStorageProtocol.OnStartReplaying(floorId);
+
         Main.Mod.Logger.Log("starting to play replay");
     }
 
@@ -173,6 +175,8 @@ public static class ReplayPlayer
                 if (SettingsReplay.Instance.Verbose)
                     Main.Mod.Logger.Log($"key release scheduled at {TrailEndTime}");
             }
+
+            ReplayStorageProtocol.OnStopReplaying();
         }
 
         PlayingReplay = false;
@@ -673,12 +677,13 @@ public static class ReplayPlayer
         Replay = replay;
         IgnoredKeys.Clear();
 
-        if (!SettingsReplay.Instance.EnableDecoderLimitKeyCount) return true;
+        if (SettingsReplay.Instance.EnableDecoderLimitKeyCount)
+            ReplayUtils.GetSortedKeyPressCounts(replay)
+                .Skip(SettingsReplay.Instance.DecoderLimitKeyCount)
+                .Select(it => it.Item1)
+                .ForEach(it => IgnoredKeys.Add(it));
 
-        ReplayUtils.GetSortedKeyPressCounts(replay)
-            .Skip(SettingsReplay.Instance.DecoderLimitKeyCount)
-            .Select(it => it.Item1)
-            .ForEach(it => IgnoredKeys.Add(it));
+        ReplayStorageProtocol.OnLoadReplay(replay.CustomPayloads);
 
         return true;
     }
@@ -687,6 +692,8 @@ public static class ReplayPlayer
     {
         Replay = null;
         IgnoredKeys.Clear();
-        PlayingReplay = false;
+        if (PlayingReplay) EndPlaying();
+
+        ReplayStorageProtocol.OnUnloadReplay();
     }
 }

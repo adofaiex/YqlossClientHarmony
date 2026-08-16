@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace YqlossClientHarmony.Features.Replay;
+namespace YqlossClientHarmony.Features.Replay.Interop;
 
 public class KeyboardSimulation : IKeyEventReceiver
 {

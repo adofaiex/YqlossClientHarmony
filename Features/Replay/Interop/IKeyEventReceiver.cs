@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace YqlossClientHarmony.Features.Replay;
+namespace YqlossClientHarmony.Features.Replay.Interop;
 
 public interface IKeyEventReceiver
 {

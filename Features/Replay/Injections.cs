@@ -158,9 +158,9 @@ public static class Injections
             var nextFloorAuto = __instance.currfloor.nextfloor != null && __instance.currfloor.nextfloor.auto;
 
             var angleDiff = __instance.cachedAngle - __instance.targetExitAngle;
-            
+
             if (!Adofai.Controller.playerOne.planetarySystem.isCW) angleDiff *= -1f;
-            if (RDC.auto || nextFloorAuto && !RDC.useOldAuto) angleDiff = 0;
+            if (RDC.auto || (nextFloorAuto && !RDC.useOldAuto)) angleDiff = 0;
 
             ReplayRecorder.OnErrorMeter(angleDiff);
         }
@@ -230,12 +230,18 @@ public static class Injections
             while (KeyQueue.TryDequeue(out var key))
                 sortedKeyQueue.Enqueue(key, key.GetTimeInTicks());
 
+            var keys = Persistence.keyLimiterKeys.asyncKeysCache;
+            var limit = RDInput.useKeyLimiter && keys.Count > 0;
+
             while (sortedKeyQueue.TryDequeue(out var key, out var ticks))
+            {
+                if (limit && !keys.Contains(key.Key)) continue;
                 ReplayRecorder.OnKeyEvent(
                     0x1000 + key.Key,
                     key.Type == EventType.KeyReleased,
                     DspToSong(TickToDsp(ticks), SettingsReplay.Instance.AsyncRecordingOffset / 1000.0)
                 );
+            }
         }
     }
 
@@ -281,6 +287,9 @@ public static class Injections
 
             var mainKeys = MainKeysField(RDInput.keyboardInput)!;
 
+            var keys = Persistence.keyLimiterKeys.unityKeysCache;
+            var limit = RDInput.useKeyLimiter && keys.Count > 0;
+
             foreach (var mainKey in mainKeys)
             {
                 var wentDown = Input.GetKeyDown(mainKey);
@@ -295,6 +304,7 @@ public static class Injections
 
                 void CallEvent(bool isKeyUp)
                 {
+                    if (limit && !keys.Contains(mainKey)) return;
                     ReplayRecorder.OnKeyEvent(
                         (int)mainKey,
                         isKeyUp,
@@ -344,7 +354,7 @@ public static class Injections
     [HarmonyPatch(typeof(scrPlayer), nameof(scrPlayer.ValidInputWasTriggered))]
     public static class Inject_scrPlayer_ValidInputWasTriggered
     {
-        public static bool Prefix( ref bool __result )
+        public static bool Prefix(ref bool __result)
         {
             if (!ReplayPlayer.PlayingReplay) return true;
 
@@ -385,7 +395,7 @@ public static class Injections
     [HarmonyPatch(typeof(scrPlayer), "CheckPostHoldFail")]
     public static class Inject_scrPlayer_CheckPostHoldFail
     {
-        public static bool Prefix( )
+        public static bool Prefix()
         {
             if (!ReplayPlayer.PlayingReplay) return true;
             var continueExecution = ReplayPlayer.NextCheckFailMiss;
@@ -397,7 +407,7 @@ public static class Injections
     [HarmonyPatch(typeof(scrPlayer), nameof(scrPlayer.Hit))]
     public static class Inject_scrPlayer_Hit
     {
-        public static void Prefix( )
+        public static void Prefix()
         {
             if (!ReplayPlayer.PlayingReplay) return;
             if (!Adofai.Controller.noFailInfiniteMargin) return;
@@ -460,7 +470,7 @@ public static class Injections
         public static void Prefix()
         {
             var controller = Adofai.Controller;
-            
+
             if (ReplayRecorder.Replay is null) return;
 
             if (

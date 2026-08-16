@@ -9,6 +9,7 @@ public class Replay(Replay.MetadataType metadata)
     public MetadataType Metadata { get; } = metadata;
     public List<KeyEventType> KeyEvents { get; } = [];
     public List<JudgementType> Judgements { get; } = [];
+    public Dictionary<string, byte[]> CustomPayloads { get; } = [];
 
     public readonly struct MetadataType(
         int startingFloorId,
@@ -28,7 +29,8 @@ public class Replay(Replay.MetadataType metadata)
         string? ychVersion,
         string? modList,
         double? inputOffset,
-        int? audioBufferSize
+        int? audioBufferSize,
+        double? pitch
     )
     {
         public readonly int StartingFloorId = startingFloorId;
@@ -48,6 +50,7 @@ public class Replay(Replay.MetadataType metadata)
         public readonly string? ModList = modList;
         public readonly double? InputOffset = inputOffset;
         public readonly int? AudioBufferSize = audioBufferSize;
+        public readonly double? Pitch = pitch;
     }
 
     public readonly struct KeyEventType(

@@ -2,7 +2,7 @@ using System;
 using HarmonyLib;
 using UnityModManagerNet;
 
-namespace YqlossClientHarmony.Features.Replay;
+namespace YqlossClientHarmony.Features.Replay.Interop;
 
 public class CompatibilityOverlayer
 {
