@@ -10,6 +10,7 @@ Gui.Replay.ReplayInformation.Pitch.Unknown=???x
 Gui.Replay.ReplayInformation.XAccuracy.Value={0:F3}%
 Gui.Replay.ReplayInformation.Progress.Value={0:F0}% ({1}/{4}) ~ {2:F0}% ({3}/{4})
 Gui.Replay.ReplayInformation.Judgements.Value=<color=#D958FF>{0}</color> <color=#FF0000>{1}</color> <color=#FF6F4E>{2}</color> <color=#A0FF4E>{3}</color> <color=#60FF4E>{4} ({5})</color> <color=#A0FF4E>{6}</color><color=#FF6F4E> {7}</color> <color=#FF0000>{8}</color> <color=#D958FF>{9}</color>
+Gui.Replay.ReplayInformation.PerfectBreakdown.Value=<color=#A0FF4E>Perfect-: {0}</color>  <color=#4E9BFF>XPerfect: {1}</color>  <color=#A0FF4E>Perfect+: {2}</color>
 Gui.Replay.ReplayInformation.KeyCount.Value={0}
 Gui.Replay.ReplayInformation.Plugins.Value={0}
 Gui.Replay.ReplayInformation.KeyPressCounts.Value={0}

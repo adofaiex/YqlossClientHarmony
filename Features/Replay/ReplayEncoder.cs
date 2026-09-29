@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
-using System.Windows.Forms;
+using YqlossClientHarmony.Gui;
 
 namespace YqlossClientHarmony.Features.Replay;
 
@@ -84,7 +84,7 @@ public static class ReplayEncoder
             // 0-8
             writer.Write(judgement.ErrorMeter);
             // 8-9
-            writer.Write((byte)judgement.HitMargin);
+            writer.Write(HitMarginCompat.ToSerialized(judgement.HitMargin));
             // 9-10
             writer.Write((byte)judgement.FloorIdIncrement);
         }
@@ -154,9 +154,9 @@ public static class ReplayEncoder
             Main.Mod.Logger.Error($"{exception}");
             Main.Mod.Logger.Error("replay binary data are as follow, in base64 format:");
             Main.Mod.Logger.Error($"{Convert.ToBase64String(data)}");
-            MessageBox.Show(
-                I18N.Translate("Dialog.Replay.SaveFailure.Text"),
-                I18N.Translate("Dialog.Replay.SaveFailure.Title")
+            DialogManager.Alert(
+                I18N.Translate("Dialog.Replay.SaveFailure.Title"),
+                I18N.Translate("Dialog.Replay.SaveFailure.Text")
             );
         }
     }
@@ -174,9 +174,9 @@ public static class ReplayEncoder
             {
                 Main.Mod.Logger.Error($"failed to save replay as {path}");
                 Main.Mod.Logger.Error($"{exception}");
-                MessageBox.Show(
-                    I18N.Translate("Dialog.Replay.EncodeFailure.Text"),
-                    I18N.Translate("Dialog.Replay.EncodeFailure.Title")
+                DialogManager.Alert(
+                    I18N.Translate("Dialog.Replay.EncodeFailure.Title"),
+                    I18N.Translate("Dialog.Replay.EncodeFailure.Text")
                 );
             }
         }) { IsBackground = false }.Start();

@@ -10,7 +10,8 @@ public static class ReplayConstants
     public const int FormatVersion = 1;
     public const int MetadataFormatVersion = 3;
     public const int KeyEventFormatVersion = 2;
-    public const int JudgementFormatVersion = 1;
+    // 1: the HitMargin layout before 3.4.0, 2: the layout of 3.4.0 (see HitMarginCompat)
+    public const int JudgementFormatVersion = 2;
     public const int CustomPayloadFormatVersion = 1;
     public const HitMargin HoldPreMiss = (HitMargin)127;
     public const HitMargin HoldExtraPress = (HitMargin)126;

@@ -140,6 +140,10 @@ Gui.EffectRemover.MiscEvents=其他事件
 Setting.ModifyLoadingLevel.EditorComment=禁用 编辑器附注
 Setting.ModifyLoadingLevel.Bookmark=禁用 书签
 
+Dialog.Common.Ok=确定
+Dialog.Common.Cancel=取消
+Dialog.Common.Confirm=确定
+
 Dialog.ModifyLoadingLevel.SaveModifiedLevel.Title=保存被 YCH 修改过的关卡
 Dialog.ModifyLoadingLevel.SaveModifiedLevel.Text=确定要保存被 YCH 修改过的关卡吗？\n保存此关卡会导致 YCH 所做的所有修改被保存到 .adofai 文件中。\n此操作不可逆！！！\n（如果想编辑关卡，可以在 YCH 设置中关闭“去特效”功能）
 
@@ -168,6 +172,7 @@ Gui.Replay.ReplayInformation.Pitch.Name=<b>倍速：</b>
 Gui.Replay.ReplayInformation.XAccuracy.Name=<b>X-精准度：</b>
 Gui.Replay.ReplayInformation.Progress.Name=<b>进度：</b>
 Gui.Replay.ReplayInformation.Judgements.Name=<b>判定：</b>
+Gui.Replay.ReplayInformation.PerfectBreakdown.Name=<b>完美判定明细：</b>
 Gui.Replay.ReplayInformation.Difficulty.Name=<b>难度：</b>
 Gui.Replay.ReplayInformation.Difficulty.Lenient=宽松
 Gui.Replay.ReplayInformation.Difficulty.Normal=标准

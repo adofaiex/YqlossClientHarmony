@@ -254,7 +254,7 @@ public static class ReplayDecoder
         for (var i = 0; i < count; i++)
             judgements.Add(new Replay.JudgementType(
                 reader.ReadDouble(),
-                (HitMargin)reader.ReadByte(),
+                HitMarginCompat.FromSerialized(version, reader.ReadByte()),
                 reader.ReadByte()
             ));
 

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using ADOFAI;
 using GDMiniJSON;
 using HarmonyLib;
+using YqlossClientHarmony.Gui;
 
 namespace YqlossClientHarmony.Features.ModifyLoadingLevel;
 
@@ -16,15 +16,25 @@ public static class Injections
 
     private static bool ConfirmedSaving { get; set; }
 
-    private static bool ShowConfirmSavingDialog()
+    private static readonly Action<scnEditor> SaveAndQuitInvoker =
+        AccessTools.MethodDelegate<Action<scnEditor>>(AccessTools.Method(typeof(scnEditor), "SaveAndQuit"));
+
+    private static bool ShouldConfirmSaving()
     {
-        return ConfirmedSaving = MessageBox.Show(
-            I18N.Translate("Dialog.ModifyLoadingLevel.SaveModifiedLevel.Text"),
+        return IsLevelModified && !ConfirmedSaving;
+    }
+
+    private static void ShowConfirmSavingDialog(Action onConfirm)
+    {
+        DialogManager.Confirm(
             I18N.Translate("Dialog.ModifyLoadingLevel.SaveModifiedLevel.Title"),
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Warning,
-            MessageBoxDefaultButton.Button2
-        ) == DialogResult.Yes;
+            I18N.Translate("Dialog.ModifyLoadingLevel.SaveModifiedLevel.Text"),
+            () =>
+            {
+                ConfirmedSaving = true;
+                onConfirm();
+            }
+        );
     }
 
     [HarmonyPatch(typeof(LevelData), nameof(LevelData.LoadLevel))]
@@ -107,18 +117,26 @@ public static class Injections
     [HarmonyPatch(typeof(scnEditor), nameof(scnEditor.SaveLevel))]
     public static class Inject_scnEditor_SaveLevel
     {
-        public static bool Prefix()
+        public static bool Prefix(
+            scnEditor __instance
+        )
         {
-            return !IsLevelModified || ConfirmedSaving || ShowConfirmSavingDialog();
+            if (!ShouldConfirmSaving()) return true;
+            ShowConfirmSavingDialog(__instance.SaveLevel);
+            return false;
         }
     }
 
     [HarmonyPatch(typeof(scnEditor), "SaveAndQuit")]
     public static class Inject_scnEditor_SaveAndQuit
     {
-        public static bool Prefix()
+        public static bool Prefix(
+            scnEditor __instance
+        )
         {
-            return !IsLevelModified || ConfirmedSaving || ShowConfirmSavingDialog();
+            if (!ShouldConfirmSaving()) return true;
+            ShowConfirmSavingDialog(() => SaveAndQuitInvoker(__instance));
+            return false;
         }
     }
 }

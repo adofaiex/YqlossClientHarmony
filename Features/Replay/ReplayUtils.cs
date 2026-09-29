@@ -32,27 +32,54 @@ public static class ReplayUtils
         return floorId;
     }
 
+    // mirrors scrMarginTracker.CalculatePercentAcc of the running game
     public static double GetXAccuracy(Replay replay)
     {
         if (replay.Judgements.Count == 0) return 0;
 
         var xAccuracy = 0.0;
+        var count = 0;
 
         foreach (var judgement in replay.Judgements)
-            xAccuracy += judgement.HitMargin switch
-            {
-                HitMargin.TooEarly => 0.2,
-                HitMargin.VeryEarly => 0.4,
-                HitMargin.EarlyPerfect => 0.75,
-                HitMargin.Perfect => 1.0,
-                HitMargin.LatePerfect => 0.75,
-                HitMargin.VeryLate => 0.4,
-                HitMargin.TooLate => 0.2,
-                HitMargin.Auto => 1.0,
-                _ => 0.0
-            };
+        {
+            var weight = GetXAccuracyWeight(judgement.HitMargin);
+            if (weight is null) continue;
+            xAccuracy += weight.Value;
+            ++count;
+        }
 
-        return xAccuracy / replay.Judgements.Count;
+        return count == 0 ? 0 : xAccuracy / count;
+    }
+
+    private static double? GetXAccuracyWeight(HitMargin hitMargin)
+    {
+        // 126 and 127 are internal markers, which the game sees as no judgement or a FailMiss
+        if (hitMargin == ReplayConstants.HoldPreMiss) hitMargin = HitMargin.FailMiss;
+        if (hitMargin == ReplayConstants.HoldExtraPress) return null;
+
+        // 3.4.0 only counts the judgement types in the official weight table,
+        // so Midspin, Auto, Multipress and OverPress no longer affect x-accuracy
+        if (HitMarginCompat.OfficialWeights is { } weights)
+            return weights.TryGetValue(hitMargin, out var weight) ? weight : null;
+
+        return hitMargin.ToString() switch
+        {
+            "Perfect" or "Auto" => 1.0,
+            "EarlyPerfect" or "LatePerfect" => 0.75,
+            "VeryEarly" or "VeryLate" => 0.4,
+            "TooEarly" or "TooLate" => 0.2,
+            _ => 0.0
+        };
+    }
+
+    // on 3.4.0 XPerfect / PerfectMinus / PerfectPlus together make up the Perfect of old versions
+    public static int GetPerfectCount(Replay replay)
+    {
+        if (!HitMarginCompat.HasSplitPerfect) return GetHitMarginCount(replay, HitMarginCompat.Perfect);
+
+        return GetHitMarginCount(replay, HitMarginCompat.PerfectMinus)
+               + GetHitMarginCount(replay, HitMarginCompat.XPerfect)
+               + GetHitMarginCount(replay, HitMarginCompat.PerfectPlus);
     }
 
     public static int GetHitMarginCount(Replay replay, HitMargin hitMargin)

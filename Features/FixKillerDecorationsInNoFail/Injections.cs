@@ -1,9 +1,34 @@
+using System.Reflection;
 using HarmonyLib;
 
 namespace YqlossClientHarmony.Features.FixKillerDecorationsInNoFail;
 
 public static class Injections
 {
+    // 3.4.0 adds a mandatory HitMargin parameter to scrHitErrorMeter.AddHit,
+    // so the right overload is picked at runtime
+    private static readonly MethodInfo AddHit = (
+        AccessTools.Method(
+            typeof(scrHitErrorMeter),
+            nameof(scrHitErrorMeter.AddHit),
+            [typeof(float), typeof(HitMargin), typeof(float), typeof(scrPlanet), typeof(scrFloor)]
+        ) ?? AccessTools.Method(
+            typeof(scrHitErrorMeter),
+            nameof(scrHitErrorMeter.AddHit),
+            [typeof(float), typeof(float), typeof(scrPlanet), typeof(scrFloor)]
+        )
+    )!;
+
+    private static readonly bool AddHitHasHitMargin = AddHit.GetParameters().Length == 5;
+
+    private static void AddErrorMeterHit(scrHitErrorMeter errorMeter, scrPlanet? planet)
+    {
+        object?[] arguments = AddHitHasHitMargin
+            ? [float.NegativeInfinity, HitMargin.FailOverload, 1F, planet, null]
+            : [float.NegativeInfinity, 1F, planet, null];
+        AddHit.Invoke(errorMeter, arguments);
+    }
+
     [HarmonyPatch(typeof(scrDecoration), nameof(scrDecoration.HitboxTriggerAction))]
     public static class Inject_scrDecoration_HitboxTriggerAction
     {
@@ -28,7 +53,7 @@ public static class Injections
 
             Interoperation.ReplayIgnoreJudgement = true;
             planet?.player?.marginTracker?.AddHit(HitMargin.FailOverload);
-            Adofai.Controller.errorMeter.AddHit(float.NegativeInfinity, planet: planet);
+            AddErrorMeterHit(Adofai.Controller.errorMeter, planet);
             planet?.MarkFail()?.BlinkForSeconds(3);
             Interoperation.ReplayIgnoreJudgement = false;
         }

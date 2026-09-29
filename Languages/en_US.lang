@@ -140,6 +140,10 @@ Gui.EffectRemover.MiscEvents=Misc Events
 Setting.ModifyLoadingLevel.EditorComment=Disable Editor Comment
 Setting.ModifyLoadingLevel.Bookmark=Disable Bookmark
 
+Dialog.Common.Ok=OK
+Dialog.Common.Cancel=Cancel
+Dialog.Common.Confirm=Confirm
+
 Dialog.ModifyLoadingLevel.SaveModifiedLevel.Title=Modified Level Saving Confirmation
 Dialog.ModifyLoadingLevel.SaveModifiedLevel.Text=Are you sure you want to save this modified level?\nSaving this level can cause all changes YCH has made to be saved in the .adofai file!\nThis is irreversible!!!\n(You can disable Effect Remover in YCH settings if you are editing levels)
 
@@ -168,6 +172,7 @@ Gui.Replay.ReplayInformation.Pitch.Name=<b>Pitch:</b>
 Gui.Replay.ReplayInformation.XAccuracy.Name=<b>X-Accuracy:</b>
 Gui.Replay.ReplayInformation.Progress.Name=<b>Progress:</b>
 Gui.Replay.ReplayInformation.Judgements.Name=<b>Judgements:</b>
+Gui.Replay.ReplayInformation.PerfectBreakdown.Name=<b>Perfect Breakdown:</b>
 Gui.Replay.ReplayInformation.Difficulty.Name=<b>Difficulty:</b>
 Gui.Replay.ReplayInformation.Difficulty.Lenient=Lenient
 Gui.Replay.ReplayInformation.Difficulty.Normal=Normal

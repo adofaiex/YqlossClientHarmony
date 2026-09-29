@@ -321,7 +321,7 @@ public static class ReplayPlayer
         {
             HitMargin.FailMiss => HitMargin.TooLate,
             HitMargin.FailOverload => HitMargin.TooEarly,
-            HitMargin.Auto => HitMargin.Perfect,
+            HitMargin.Auto => HitMarginCompat.Perfect,
             ReplayConstants.HoldPreMiss => HitMargin.TooEarly,
             ReplayConstants.HoldExtraPress => HitMargin.TooEarly,
             _ => hitMargin

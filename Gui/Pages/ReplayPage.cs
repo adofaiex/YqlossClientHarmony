@@ -127,14 +127,20 @@ public static class ReplayPage
             I18N.Translate("Gui.Replay.ReplayInformation.Pitch.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.XAccuracy.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.Progress.Name"),
-            I18N.Translate("Gui.Replay.ReplayInformation.Judgements.Name"),
+            I18N.Translate("Gui.Replay.ReplayInformation.Judgements.Name")
+        ];
+
+        if (HitMarginCompat.HasSplitPerfect)
+            keys = keys.Append(I18N.Translate("Gui.Replay.ReplayInformation.PerfectBreakdown.Name"));
+
+        keys = keys.Concat([
             I18N.Translate("Gui.Replay.ReplayInformation.Difficulty.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.NoFail.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.HoldTileBehavior.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.LimitJudgements.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.KeyCount.Name"),
             I18N.Translate("Gui.Replay.ReplayInformation.Plugins.Name")
-        ];
+        ]);
 
         if (advanced)
             keys = keys.Concat([
@@ -176,7 +182,7 @@ public static class ReplayPage
         var te = ReplayUtils.GetHitMarginCount(replay, HitMargin.TooEarly);
         var e = ReplayUtils.GetHitMarginCount(replay, HitMargin.VeryEarly);
         var ep = ReplayUtils.GetHitMarginCount(replay, HitMargin.EarlyPerfect);
-        var pp = ReplayUtils.GetHitMarginCount(replay, HitMargin.Perfect);
+        var pp = ReplayUtils.GetPerfectCount(replay);
         var lp = ReplayUtils.GetHitMarginCount(replay, HitMargin.LatePerfect);
         var l = ReplayUtils.GetHitMarginCount(replay, HitMargin.VeryLate);
         var tl = ReplayUtils.GetHitMarginCount(replay, HitMargin.TooLate);
@@ -216,7 +222,7 @@ public static class ReplayPage
         var audioBufferSizeKey = replay.Metadata.AudioBufferSize is null ? "Unknown" : "Value";
         var (uniqueKeys, keyCounts) = GetKeyCountInfo(replay);
         var plugins = string.Join(",", replay.CustomPayloads.Keys);
-        return
+        List<string> values =
         [
             I18N.Translate("Gui.Replay.ReplayInformation.ReplayFile.Value", replayFileName),
             I18N.Translate($"Gui.Replay.ReplayInformation.LevelPath.{levelPathKey}", replay.Metadata.LevelPath),
@@ -226,7 +232,18 @@ public static class ReplayPage
             I18N.Translate($"Gui.Replay.ReplayInformation.Pitch.{pitchKey}", pitch),
             I18N.Translate("Gui.Replay.ReplayInformation.XAccuracy.Value", xAccuracy),
             I18N.Translate("Gui.Replay.ReplayInformation.Progress.Value", startProgress, startFloor, endProgress, endFloor, replay.Metadata.TotalFloorCount),
-            I18N.Translate("Gui.Replay.ReplayInformation.Judgements.Value", overload, te, e, ep, pp, auto, lp, l, tl, miss),
+            I18N.Translate("Gui.Replay.ReplayInformation.Judgements.Value", overload, te, e, ep, pp, auto, lp, l, tl, miss)
+        ];
+
+        if (HitMarginCompat.HasSplitPerfect)
+            values.Add(I18N.Translate(
+                "Gui.Replay.ReplayInformation.PerfectBreakdown.Value",
+                ReplayUtils.GetHitMarginCount(replay, HitMarginCompat.PerfectMinus),
+                ReplayUtils.GetHitMarginCount(replay, HitMarginCompat.XPerfect),
+                ReplayUtils.GetHitMarginCount(replay, HitMarginCompat.PerfectPlus)
+            ));
+
+        values.AddRange([
             I18N.Translate($"Gui.Replay.ReplayInformation.Difficulty.{difficulty}"),
             I18N.Translate($"Gui.Replay.ReplayInformation.NoFail.{noFail}"),
             I18N.Translate($"Gui.Replay.ReplayInformation.HoldTileBehavior.{holdBehavior}"),
@@ -242,7 +259,9 @@ public static class ReplayPage
             I18N.Translate($"Gui.Replay.ReplayInformation.InputOffset.{inputOffsetKey}", replay.Metadata.InputOffset),
             I18N.Translate($"Gui.Replay.ReplayInformation.AudioBufferSize.{audioBufferSizeKey}", replay.Metadata.AudioBufferSize),
             I18N.Translate($"Gui.Replay.ReplayInformation.ModList.{modListKey}", replay.Metadata.ModList)
-        ];
+        ]);
+
+        return values.ToArray();
     }
 
     public static void Draw()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using ADOFAI;
 using HarmonyLib;
 using MonsterLove.StateMachine;
@@ -166,9 +167,25 @@ public static class Injections
         }
     }
 
-    [HarmonyPatch(typeof(scrMisc), nameof(scrMisc.GetHitMargin))]
+    // 3.4.0 removes scrMisc.GetHitMargin in favor of GetHitMarginInDeg / GetHitMarginInSec,
+    // so the patch target is resolved at runtime to support both old and new versions
+    [HarmonyPatch]
     public static class Inject_scrMisc_GetHitMargin
     {
+        public static IEnumerable<MethodBase> TargetMethods()
+        {
+            var type = typeof(scrMisc);
+
+            if (AccessTools.Method(type, "GetHitMargin") is { } legacy) return [legacy];
+
+            List<MethodBase> methods = [];
+            foreach (var name in new[] { "GetHitMarginInDeg", "GetHitMarginInSec" })
+                if (AccessTools.Method(type, name) is { } method)
+                    methods.Add(method);
+
+            return methods;
+        }
+
         public static void Postfix(
             ref HitMargin __result
         )

@@ -9,7 +9,13 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <EnableDefaultItems>false</EnableDefaultItems>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <GameManagedPath>ADOFAIGame\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed</GameManagedPath>
+        <GameManagedPath Condition="'$(GameManagedPath)' == ''">ADOFAIGame\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed</GameManagedPath>
+        <!-- the executable of the Linux build is named ADanceOfFireAndIce, so its data folder has no spaces -->
+        <GameManagedPath Condition="!Exists('$(GameManagedPath)') And Exists('ADOFAIGame\ADanceOfFireAndIce_Data\Managed')">ADOFAIGame\ADanceOfFireAndIce_Data\Managed</GameManagedPath>
+        <!-- compile against the BCL shipped with the game, which is what the mod actually runs on -->
+        <FrameworkPathOverride>$(MSBuildProjectDirectory)\$(GameManagedPath)</FrameworkPathOverride>
+        <EnableFrameworkPathOverride>false</EnableFrameworkPathOverride>
+        <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">

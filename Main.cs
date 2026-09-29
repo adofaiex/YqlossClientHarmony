@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using HarmonyLib;
+using UnityEngine;
 using UnityModManagerNet;
 using YqlossClientHarmony.Features.Replay;
 using YqlossClientHarmony.Gui;
@@ -74,6 +75,10 @@ public static class Main
     public static void Load(UnityModManager.ModEntry mod)
     {
         InitializeMod(mod);
+
+        var dialogRenderer = new GameObject("YCH Dialog Renderer");
+        UnityEngine.Object.DontDestroyOnLoad(dialogRenderer);
+        dialogRenderer.AddComponent<DialogRenderer>();
     }
 
     private static void OnToggle(bool enabled)
