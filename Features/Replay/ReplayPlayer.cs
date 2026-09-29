@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using HarmonyLib;
 using UnityEngine;
 using YqlossClientHarmony.Features.Replay.Interop;
 
@@ -7,6 +9,11 @@ namespace YqlossClientHarmony.Features.Replay;
 
 public static class ReplayPlayer
 {
+    // 3.4.0 changes the tick parameter of Simulated_PlayerControl_Update from ulong? to long?,
+    // so the method is resolved at runtime to support both old and new versions
+    private static readonly MethodInfo SimulatedPlayerControlUpdateMethod =
+        AccessTools.Method(typeof(scrPlayer), nameof(scrPlayer.Simulated_PlayerControl_Update))!;
+
     public static bool PlayingReplay { get; set; }
 
     public static Replay? Replay { get; set; }
@@ -40,6 +47,12 @@ public static class ReplayPlayer
     public static HashSet<int> IgnoredKeys { get; } = [];
 
     private static double SongSeconds => Injections.DspToSong(Adofai.Conductor.dspTime, SettingsReplay.Instance.PlayingOffset / 1000.0);
+
+    // the game simulates one update with the current frame as the target tick
+    private static void SimulatedPlayerControlUpdate()
+    {
+        SimulatedPlayerControlUpdateMethod.Invoke(Adofai.Controller.playerOne, [null]);
+    }
 
     private static void SortKeyEvents(List<(Replay.KeyEventType, int)> keyEvents)
     {
@@ -342,7 +355,7 @@ public static class ReplayPlayer
                 AllowGameToUpdateInput = true;
                 AllowAuto = true;
                 ReplayKeyboardInputType.Instance.MarkUpdate();
-                Adofai.Controller.playerOne.Simulated_PlayerControl_Update();
+                SimulatedPlayerControlUpdate();
                 AllowGameToUpdateInput = false;
                 if (Adofai.CurrentFloorId == floorId) break;
                 if (SettingsReplay.Instance.Verbose) Main.Mod.Logger.Log("auto floor");
@@ -365,7 +378,7 @@ public static class ReplayPlayer
                     AllowGameToUpdateInput = true;
                     AllowAuto = false;
                     ReplayKeyboardInputType.Instance.MarkUpdate();
-                    Adofai.Controller.playerOne.Simulated_PlayerControl_Update();
+                    SimulatedPlayerControlUpdate();
                     NextCheckFailMiss = false;
                     AllowGameToUpdateInput = false;
                 }
@@ -485,7 +498,7 @@ public static class ReplayPlayer
                 AllowGameToUpdateInput = true;
                 AllowAuto = true;
                 ReplayKeyboardInputType.Instance.MarkUpdate();
-                Adofai.Controller.playerOne.Simulated_PlayerControl_Update();
+                SimulatedPlayerControlUpdate();
                 AllowGameToUpdateInput = false;
                 return;
             }
@@ -546,7 +559,7 @@ public static class ReplayPlayer
                     AllowGameToUpdateInput = true;
                     ReplayKeyboardInputType.Instance.MarkUpdate();
 
-                    Adofai.Controller.playerOne.Simulated_PlayerControl_Update();
+                    SimulatedPlayerControlUpdate();
 
                     if (SettingsReplay.Instance.Verbose)
                         Main.Mod.Logger.Log("end simulation");
