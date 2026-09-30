@@ -7,5 +7,5 @@
   "EntryMethod": "YqlossClientHarmony.Main.Load",
   "ManagerVersion": "0.32.5",
   "HomePage": "https://ych.yqloss.net",
-  "Repository": "https://ummrepo.ych.yqloss.net/"
+  "Repository": "http://ummrepo.ych.yqloss.net/"
 }
