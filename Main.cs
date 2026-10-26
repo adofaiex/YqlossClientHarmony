@@ -1,10 +1,10 @@
 using System;
-using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 using UnityModManagerNet;
 using YqlossClientHarmony.Features.Replay;
 using YqlossClientHarmony.Gui;
+using YqlossClientHarmony.Utilities;
 
 namespace YqlossClientHarmony;
 
@@ -83,16 +83,8 @@ public static class Main
 
     private static void OnToggle(bool enabled)
     {
-        if (enabled)
-        {
-            Harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Mod.Logger.Log("patching");
-        }
-        else
-        {
-            Harmony.UnpatchAll(Harmony.Id);
-            Mod.Logger.Log("unpatching");
-        }
+        if (enabled) PatchManager.PatchAll();
+        else PatchManager.UnpatchAll();
     }
 
     private static void OnSettingChange()

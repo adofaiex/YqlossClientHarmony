@@ -274,7 +274,9 @@ public static class ReplayPage
         {
             Text(I18N.Translate("Page.Replay.Name"), TextStyle.Title);
             Separator();
+            var replayEnabled = Main.Settings.EnableReplay;
             SwitchOption(group, ref Main.Settings.EnableReplay, "Setting.Replay.Enabled", true);
+            if (replayEnabled && !Main.Settings.EnableReplay) ReplayPlayer.UnloadReplay();
             Separator();
             AddMargin(8);
 

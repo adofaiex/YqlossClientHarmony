@@ -6,6 +6,10 @@ Page.Replay.Name=Replay
 Page.EffectRemover.Name=Effect Remover
 Page.OtherFeatures.Name=Other Features
 
+Gui.PatchManager.Failed=<b>{0} patch(es) failed to apply</b>
+Gui.PatchManager.Copy=Copy details
+Gui.PatchManager.Hint=The related features may not work. Details are in the game log.
+
 Setting.FixKillerDecorationsInNoFail.Enabled=Fix killer decorations failing the game in no fail mode (count as "Overload!" if enabled)
 Setting.FixSetInputEventCrash.Enabled=Fix Set Input Event making levels unplayable
 Setting.RevertCounterclockwiseUTurnPause.Enabled=Revert changes to Pause on counterclockwise U-Turns in 2.9.4

@@ -20,6 +20,7 @@ public static class SettingUtil
         {
             if (value is null) return instance;
             Main.Settings.Save(Main.Mod);
+            PatchManager.UpdateAllPatches();
             return instance;
         }
     }

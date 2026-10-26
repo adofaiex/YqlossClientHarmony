@@ -6,6 +6,10 @@ Page.Replay.Name=回放
 Page.EffectRemover.Name=去特效
 Page.OtherFeatures.Name=其他功能
 
+Gui.PatchManager.Failed=<b>{0} 个补丁应用失败</b>
+Gui.PatchManager.Copy=复制详情
+Gui.PatchManager.Hint=相关功能可能无法使用，详情见游戏日志。
+
 Setting.FixKillerDecorationsInNoFail.Enabled=修复死亡装饰物在不会失败模式中导致玩家死亡（开启功能后算作“按太快！”）
 Setting.FixSetInputEventCrash.Enabled=修复设置输入事件使谱面无法播放
 Setting.RevertCounterclockwiseUTurnPause.Enabled=撤销 2.9.4 中对逆时针发卡弯上的暂停的修改
