@@ -1,6 +1,8 @@
 $root = "$PSScriptRoot/../.."
 
-Remove-Item -Path "$root/build" -Recurse
+if (Test-Path -LiteralPath "$root/build") {
+    Remove-Item -LiteralPath "$root/build" -Recurse
+}
 New-Item -Path "$root/build" -ItemType Directory
 
 New-Item -Path "$root/build/files" -ItemType Directory
