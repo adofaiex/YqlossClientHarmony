@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityFileDialog;
 using YqlossClientHarmony.Features.Replay;
 using YqlossClientHarmony.Utilities;
@@ -464,7 +465,10 @@ public static class ReplayPage
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Language, Replay);
+            unchecked
+            {
+                return (Language.GetHashCode() * 397) ^ RuntimeHelpers.GetHashCode(Replay);
+            }
         }
     }
 }
